@@ -1,0 +1,44 @@
+name: morning-email
+region: nyc
+
+services:
+  - name: n8n
+    http_port: 5678
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    dockerfile_path: docker/n8n/Dockerfile
+    source_dir: .
+    routes:
+      - path: /
+    health_check:
+      http_path: /
+      initial_delay_seconds: 20
+      period_seconds: 10
+      timeout_seconds: 5
+      success_threshold: 1
+      failure_threshold: 6
+    volumes:
+      - name: n8n-data
+        mount_path: /home/node/.n8n
+        size_gigabytes: 1
+    envs:
+      - key: N8N_RUNNERS_AUTH_TOKEN
+        scope: RUN_TIME
+        type: SECRET
+        value: your-secret-here
+      - key: N8N_ENCRYPTION_KEY
+        scope: RUN_TIME
+        type: SECRET
+        value: replace-with-long-random-string
+
+workers:
+  - name: task-runners
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    dockerfile_path: docker/task-runners/Dockerfile
+    source_dir: .
+    envs:
+      - key: N8N_RUNNERS_AUTH_TOKEN
+        scope: RUN_TIME
+        type: SECRET
+        value: your-secret-here

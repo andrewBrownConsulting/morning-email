@@ -1,0 +1,3 @@
+FROM n8nio/runners:1.111.0
+
+ENV N8N_RUNNERS_TASK_BROKER_URI=http://n8n:5679
