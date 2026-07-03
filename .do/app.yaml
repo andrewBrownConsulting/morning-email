@@ -1,0 +1,82 @@
+name: n8n-app
+region: nyc
+
+services:
+  - name: n8n
+    dockerfile_path: Dockerfile
+    source_dir: /
+    http_port: 5678
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    health_check:
+      http_path: /healthz
+      initial_delay_seconds: 20
+      period_seconds: 15
+      timeout_seconds: 5
+      success_threshold: 1
+      failure_threshold: 3
+    envs:
+      - key: NODE_ENV
+        scope: RUN_TIME
+        value: production
+      - key: N8N_PROTOCOL
+        scope: RUN_TIME
+        value: https
+      - key: N8N_PORT
+        scope: RUN_TIME
+        value: "5678"
+      - key: N8N_HOST
+        scope: RUN_TIME
+        value: your-app-domain
+      - key: WEBHOOK_URL
+        scope: RUN_TIME
+        value: https://your-app-domain/
+      - key: GENERIC_TIMEZONE
+        scope: RUN_TIME
+        value: UTC
+      - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
+        scope: RUN_TIME
+        value: "true"
+      - key: N8N_BASIC_AUTH_ACTIVE
+        scope: RUN_TIME
+        value: "true"
+      - key: N8N_BASIC_AUTH_USER
+        scope: RUN_TIME
+        type: SECRET
+        value: admin
+      - key: N8N_BASIC_AUTH_PASSWORD
+        scope: RUN_TIME
+        type: SECRET
+        value: CHANGE_ME
+      - key: N8N_ENCRYPTION_KEY
+        scope: RUN_TIME
+        type: SECRET
+        value: CHANGE_ME_WITH_LONG_RANDOM_VALUE
+      - key: N8N_DEFAULT_BINARY_DATA_MODE
+        scope: RUN_TIME
+        value: database
+      - key: DB_TYPE
+        scope: RUN_TIME
+        value: postgresdb
+      - key: DB_POSTGRESDB_HOST
+        scope: RUN_TIME
+        value: ${n8n-db.HOSTNAME}
+      - key: DB_POSTGRESDB_PORT
+        scope: RUN_TIME
+        value: ${n8n-db.PORT}
+      - key: DB_POSTGRESDB_DATABASE
+        scope: RUN_TIME
+        value: ${n8n-db.DATABASE}
+      - key: DB_POSTGRESDB_USER
+        scope: RUN_TIME
+        value: ${n8n-db.USERNAME}
+      - key: DB_POSTGRESDB_PASSWORD
+        scope: RUN_TIME
+        type: SECRET
+        value: ${n8n-db.PASSWORD}
+
+databases:
+  - name: n8n-db
+    engine: PG
+    production: true
+    version: "16"
