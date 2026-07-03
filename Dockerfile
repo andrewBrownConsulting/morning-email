@@ -1,9 +1,0 @@
-FROM n8nio/n8n:latest
-
-ENV N8N_LISTEN_ADDRESS=0.0.0.0 \
-    N8N_PORT=8080 \
-    N8N_PROTOCOL=https
-
-EXPOSE 8080
-
-CMD ["start"]
